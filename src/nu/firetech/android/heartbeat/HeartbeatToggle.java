@@ -40,33 +40,23 @@ public class HeartbeatToggle extends Activity {
 	private static final String CONTROL_CMD = "echo %s > /sys/class/leds/cpu/trigger";
 	private static final String ON_MODE = "heartbeat";
 	private static final String OFF_MODE = "none";
-
-	/** Called when the activity is first created. */
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		toggle();
-	}
-
-	@Override
-	public void onResume() {
-		toggle();
-	}
-
-	private void toggle() {
-		String status = exec(STATUS_CMD);
-		
-		boolean is_on = (status.indexOf("[" + ON_MODE + "]") != -1);
-		
-		exec(String.format(CONTROL_CMD, (is_on ? OFF_MODE : ON_MODE)));
-		Toast t = Toast.makeText(this, "CPU heartbeat LED " + (is_on ? "disabled" : "enabled"), Toast.LENGTH_LONG);
-		t.show();
 		
 		// be nice
 		this.finish();
+		
+		boolean is_on = (suExec(STATUS_CMD).indexOf("[" + ON_MODE + "]") != -1);
+		
+		suExec(String.format(CONTROL_CMD, (is_on ? OFF_MODE : ON_MODE)));
+		
+		Toast t = Toast.makeText(this, "CPU heartbeat LED " + (is_on ? "disabled" : "enabled"), Toast.LENGTH_LONG);
+		t.show();
 	}
 
-	private String exec(String command) {
+	private String suExec(String command) {
 		String s;
 		StringBuilder sb = new StringBuilder();
 		try {
